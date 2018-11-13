@@ -1,0 +1,98 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+</head>
+<body>
+<div class="message_holder" id="placeh"></div>
+<input class="btn_holder" type="button" value="Кафедры" id="departmentbutton">
+<input class="btn_holder" type="button" value="Студенты" id="studentbutton">
+<input class="btn_holder" type="button" value="Факультеты" id="facultybutton">
+<input class="btn_holder" type="button" value="Оценки" id="marksbutton">
+<input class="btn_holder" type="button" value="Преподаватели" id="lecturerbutton">
+<input class="btn_holder" type="button" value="Добавить" id="addbutton" onclick="window.location.href = '/addform'">
+<input class="btn_holder" type="button" value="Удалить" id="deletebutton" onclick="window.location.href = '/deleteform'">
+<table class="tbl" id="departmenttable" border="1"></table>
+<table class="tbl" id="studenttable" border="1"></table>
+<table class="tbl" id="facultytable" border="1"></table>
+<table class="tbl" id="markstable" border="1"></table>
+<table class="tbl" id="lecturertable" border="1"></table>
+
+<script>
+    $("#departmentbutton").click(function () {
+        $(".tbl").hide();
+        $("#departmenttable").show();
+    });
+    $("#studentbutton").click(function () {
+        $(".tbl").hide();
+        $("#studenttable").show();
+    });
+    $("#facultybutton").click(function () {
+        $(".tbl").hide();
+        $("#facultytable").show();
+    });
+    $("#marksbutton").click(function () {
+        $(".tbl").hide();
+        $("#markstable").show();
+    });
+    $("#lecturerbutton").click(function () {
+        $(".tbl").hide();
+        $("#lecturertable").show();
+    });
+    $(document).ready(function () {
+    var tables = ['department','student','faculty','marks','lecturer'];
+    tables.forEach(function(item){
+        $("#"+item+"table").empty();
+        console.log(item);
+        $.getJSON('/data', {
+                table: item
+            },
+            function (data) {
+                var str = "";
+                var t = data.result;
+                var names = data.columns;
+                console.log(t);
+                str += "<tr>";
+                $.each(names,function (key, val) {
+                    str = str + ("<td>" + val + "</td>");
+                });
+                str+="</tr>";
+                for (var i = 0; i < t.length; i++) {
+                    str += "<tr>";
+                    $.each(t[i], function (key, val) {
+                        str = str + ("<td>" + val + "</td>");
+                    });
+                    str += "</tr>";
+                    $("#"+item+"table").append(str);
+                    str = "";
+                }
+            });
+    });
+
+    /*$.getJSON('/data', {
+                table: "department"
+            },
+            function (data) {
+                //console.log(data);
+                var str = "";
+                var t = data.result;
+                //console.log(t);
+                for (var i = 0; i < t.length; i++) {
+                    str += "<tr>";
+                    $.each(t[i], function (key, val) {
+                        str = str + ("<td>" + val + "</td>");
+                    });
+                    str += "</tr>";
+                    $("#departtable").append(str);
+                    str = "";
+                }
+            });
+            */
+    $(".tbl").hide();
+    $("#facultytable").show();
+    });
+
+</script>
+</body>
+
+</html>

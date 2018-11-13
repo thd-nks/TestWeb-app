@@ -1,0 +1,57 @@
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.2.js"></script>
+</head>
+<body>
+    <p>Выберите таблицу</p>
+    <select id="selectid">
+        <option selected disabled>Выберите таблицу</option>
+        <option id="f1" value="lecturer">Lecturer</option>
+        <option id="f2" value="student">Student</option>
+    </select>
+<form class = "form" id="formlecturer">
+    <b>Имя</b><input type="text">
+    <b>Кафедра</b><input type="text">
+    <b>Должность</b><input type="text">
+    <b>Стаж работы</b><input type="text">
+    <input class="addbutton" type="submit">
+</form>
+<form class = "form" id="formstudent">
+    <b>Имя</b><input name='name' type="text">
+    <b>Факультет</b><input name='fac' type="text">
+    <b>Кафедра</b><input name='dep' type="text">
+    <b>Год обучения</b><input name='year' type="text">
+    <input class="addbutton" type="submit">
+</form>
+<script>
+    //http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js
+    /*$("#f1").click(function () {
+        $('.form').hide();
+        $('#formlecturer').toggle();
+    });
+    $("#f2").click(function () {
+        $('.form').hide();
+        $('#formstudent').toggle();
+    });*/
+    $('.form').hide();
+    $("#selectid").change(function () {
+        $('.form').hide();
+        var tablestr = $("#selectid option:selected").val();
+        $("#form" + tablestr).toggle();
+        console.log(tablestr);
+    });
+    $(".addbutton").click(function () {
+        var tablestr = $("#selectid option:selected").val();
+        $.get('/add',{
+            table : tablestr,
+            form :  encodeURI($("#form" + tablestr).serialize())
+        },function (data) {
+            console.log(data);
+        });
+    });
+
+</script>
+
+</body>
+</html>
