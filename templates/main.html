@@ -1,7 +1,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
 </head>
 <body>
 <div class="message_holder" id="placeh"></div>
@@ -11,7 +11,6 @@
 <input class="btn_holder" type="button" value="Оценки" id="marksbutton">
 <input class="btn_holder" type="button" value="Преподаватели" id="lecturerbutton">
 <input class="btn_holder" type="button" value="Добавить" id="addbutton" onclick="window.location.href = '/addform'">
-<input class="btn_holder" type="button" value="Удалить" id="deletebutton" onclick="window.location.href = '/deleteform'">
 <table class="tbl" id="departmenttable" border="1"></table>
 <table class="tbl" id="studenttable" border="1"></table>
 <table class="tbl" id="facultytable" border="1"></table>
@@ -19,6 +18,28 @@
 <table class="tbl" id="lecturertable" border="1"></table>
 
 <script>
+    $(document).on("click",".deletebutton",function () {
+        var delinfo = this.id.split("_");
+        var tbl = delinfo[0];
+        var iddel = delinfo[1];
+        $.get('/delete',{
+            table:tbl,
+            id:iddel
+        },function (data) {
+            console.log(data);
+        });
+    });
+    $(document).on("click",".changebutton",function () {
+        var delinfo = this.id.split("_");
+        var tbl = delinfo[0];
+        var iddel = delinfo[1];
+        $.get('/change',{
+            table:tbl,
+            id:iddel
+        },function (data) {
+            console.log(data);
+        });
+    });
     $("#departmentbutton").click(function () {
         $(".tbl").hide();
         $("#departmenttable").show();
@@ -43,51 +64,48 @@
     var tables = ['department','student','faculty','marks','lecturer'];
     tables.forEach(function(item){
         $("#"+item+"table").empty();
-        console.log(item);
         $.getJSON('/data', {
                 table: item
             },
             function (data) {
                 var str = "";
-                var t = data.result;
+                var result = data.result;
                 var names = data.columns;
-                console.log(t);
+                var id =0;
                 str += "<tr>";
                 $.each(names,function (key, val) {
-                    str = str + ("<td>" + val + "</td>");
+                    if(key == 0 && item=='marks')
+                        str = str + ("<td>" + val + "</td>");
+                    else if(key!=0)
+                        str = str + ("<td>" + val + "</td>");
                 });
                 str+="</tr>";
-                for (var i = 0; i < t.length; i++) {
+                for (var i = 0; i < result.length; i++) {
                     str += "<tr>";
-                    $.each(t[i], function (key, val) {
-                        str = str + ("<td>" + val + "</td>");
+                    $.each(result[i], function (key, val) {
+                        if(key == 0 && item == 'marks'){
+                            id = val;
+                            str = str + ("<td>" + val + "</td>");
+                        }
+                        else if(key == 0){
+                            id = val;
+                        }
+                        else {
+                            str = str + ("<td>" + val + "</td>");
+                        }
                     });
                     str += "</tr>";
+                    var temp = item+ "_" + id;
+                    var delbutton = '<input class="deletebutton" type="button" value="Удалить" id=' + temp + '>';
+                    if(item != 'marks'){
+                    var chbutton =  '<input class="changebutton" type="button" value="Изменить" id=' + temp + '_change>';}
                     $("#"+item+"table").append(str);
+                    $("#"+item+"table").append(delbutton);
+                    $("#"+item+"table").append(chbutton);
                     str = "";
                 }
             });
     });
-
-    /*$.getJSON('/data', {
-                table: "department"
-            },
-            function (data) {
-                //console.log(data);
-                var str = "";
-                var t = data.result;
-                //console.log(t);
-                for (var i = 0; i < t.length; i++) {
-                    str += "<tr>";
-                    $.each(t[i], function (key, val) {
-                        str = str + ("<td>" + val + "</td>");
-                    });
-                    str += "</tr>";
-                    $("#departtable").append(str);
-                    str = "";
-                }
-            });
-            */
     $(".tbl").hide();
     $("#facultytable").show();
     });

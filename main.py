@@ -4,14 +4,15 @@ import pymysql
 app = Flask(__name__)
 
 
+
 @app.route('/')
 def main():
     return render_template('./main.html')
 
 
-@app.route('/deleteform')
+'''@app.route('/deleteform')
 def deleteform():
-    return render_template('./delete.html')
+    return render_template('./delete.html')'''
 
 
 @app.route('/delete')
@@ -23,6 +24,7 @@ def delete():
         database="mydb"
     )
     with mydb:
+        print('started')
         mycursor = mydb.cursor()
         result = request.args
         table = result['table']
@@ -30,6 +32,7 @@ def delete():
         query = 'delete from ' + table + ' where id' + table + ' = %s'
         mycursor.execute(query, (delid,))
         mydb.commit()
+        print('deleted')
         return '0'
 
 
@@ -38,7 +41,7 @@ def addform():
     return render_template('./add.html')
 
 
-@app.route('/add')
+@app.route('/add', methods=['GET', 'POST'])
 def add():
     mydb = pymysql.connect(
         host="localhost",
@@ -48,26 +51,69 @@ def add():
     )
     with mydb:
         mycursor = mydb.cursor()
-        result = request.args
-        table = result['table']
+        data = request.values
+        table = data['table']
         array = []
-        amount = "("
-        temp = result['form'].split('&')
+        inputs = "("
+        temp = data['form'].split('&')
         for i in temp:
             array.append(i.split('=')[1])
         tuple(array)
+        print(array)
+        for i in range(0, len(array)):
+            if array[i] == '':
+                array[i] = None
+        print(array)
         task = 'insert into '+table
         if table == 'student':
             task += ' (Sname, idFaculty, idDepartment, Year) values '
+        elif table == 'lecturer':
+            task += ' (LName, idDepartment, Position, WorkLength) values '
+        elif table == 'department':
+            task += ' (DName, idFaculty, Phone, Head) values '
+        elif table == 'faculty':
+            task += ' (FName, FoundationDate, Head ) values '
+        elif table == 'marks':
+            task += ' (idStudent, idLecturer, Mark, Date, Subject) values '
+        else:
+            return '0'
         for i in range(0, len(array)):
-            amount += '%s,'
-        amount = amount[0:len(amount)-1] + ')'
-        task += amount
+            inputs += '%s,'
+        inputs = inputs[0:len(inputs)-1] + ')'
+        task += inputs
         mycursor.execute(task, array)
         mydb.commit()
         print('commited')
         return '0'
 
+
+@app.route('/change')
+def change():
+    mydb = pymysql.connect(
+        host="localhost",
+        user="root",
+        passwd="123321",
+        database="mydb"
+    )
+    with mydb:
+        mycursor = mydb.cursor()
+        data = request.values
+        table = data['table']
+        query = "update " + table + " set "
+        if table == 'student':
+            query += ' Sname = %s, idDepartment = %s, Year = %s where idStudent = %s ;'
+        elif table == 'lecturer':
+            query += ' LName = %s, Position = %s, WorkLength = %s where idLecturer = %s ; '
+        elif table == 'department':
+            query += ' DName = %s, Phone = %s, Head = %s where idDepartment = %s ; '
+        elif table == 'faculty':
+            query += ' FName = %s, FoundationDate = %s, Head = %s where idFaculty = %s ;'
+        elif table == 'marks':
+            query += ' idStudent = %s, idLecturer = %s, Mark = %s, Date = %s, Subject = %s where ;'
+        else:
+            return '0'
+        print(query)
+        'mycursor.execute(query, array)'
 
 @app.route('/data')
 def data():

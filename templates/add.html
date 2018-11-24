@@ -9,12 +9,15 @@
         <option selected disabled>Выберите таблицу</option>
         <option id="f1" value="lecturer">Lecturer</option>
         <option id="f2" value="student">Student</option>
+        <option id="f3" value="department">Department</option>
+        <option id="f4" value="faculty">Faculty</option>
+        <option id="f5" value="marks">Marks</option>
     </select>
 <form class = "form" id="formlecturer">
-    <b>Имя</b><input type="text">
-    <b>Кафедра</b><input type="text">
-    <b>Должность</b><input type="text">
-    <b>Стаж работы</b><input type="text">
+    <b>Имя</b><input name='name' type="text">
+    <b>Кафедра</b><input name='dep'type="text">
+    <b>Должность</b><input name='work' type="text">
+    <b>Стаж работы</b><input name='time' type="text">
     <input class="addbutton" type="submit">
 </form>
 <form class = "form" id="formstudent">
@@ -24,16 +27,28 @@
     <b>Год обучения</b><input name='year' type="text">
     <input class="addbutton" type="submit">
 </form>
+<form class = "form" id="formdepartment">
+    <b>Название</b><input name='name' type="text">
+    <b>Факультет</b><input name='fac' type="text">
+    <b>Телефон</b><input name='num' type="text">
+    <b>Глава</b><input name='head' type="text">
+    <input class="addbutton" type="submit">
+</form>
+<form class = "form" id="formfaculty">
+    <b>Название</b><input name='name' type="text">
+    <b>Дата основания</b><input name='date' type="text">
+    <b>Глава</b><input name='head' type="text">
+    <input class="addbutton" type="submit">
+</form>
+<form class = "form" id="formmarks">
+    <b>Студент</b><input name='stud' type="text">
+    <b>Преподаватель</b><input name='lect' type="text">
+    <b>Оценка</b><input name='mark' type="text">
+    <b>Дата</b><input name='date' type="text">
+    <b>Предмет</b><input name='subj' type="text">
+    <input class="addbutton" type="submit">
+</form>
 <script>
-    //http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js
-    /*$("#f1").click(function () {
-        $('.form').hide();
-        $('#formlecturer').toggle();
-    });
-    $("#f2").click(function () {
-        $('.form').hide();
-        $('#formstudent').toggle();
-    });*/
     $('.form').hide();
     $("#selectid").change(function () {
         $('.form').hide();
@@ -43,11 +58,10 @@
     });
     $(".addbutton").click(function () {
         var tablestr = $("#selectid option:selected").val();
-        $.get('/add',{
+        $.post('/add',{
             table : tablestr,
-            form :  encodeURI($("#form" + tablestr).serialize())
-        },function (data) {
-            console.log(data);
+            form :  $("#form" + tablestr).serialize()
+        },function () {
         });
     });
 
