@@ -113,6 +113,8 @@ def change():
             return '0'
         print(query)
         'mycursor.execute(query, array)'
+        print('changed')
+        return '0'
 
 @app.route('/data')
 def data():

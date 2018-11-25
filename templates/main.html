@@ -38,13 +38,23 @@
             $(this).replaceWith("<input type='text' class="+ elemclass +"_inputs value="+ $(this).html() + ">")
         });
         //$('.'+elemclass).replaceWith("<input type='text' class="+ elemclass +"_inputs value="+ this.value + ">");
-        $('.'+elemclass+"_inputs").last().after("<input type='button' value='Применить' id="+ elemclass +"_replace >");
+        $('.'+elemclass+"_inputs").last().after("<input type='button' value='Применить' class='replace' id="+ elemclass +"_replace >");
+    });
+    $(document).on("click",".replace",function () {
+        var delinfo = this.id.split("_");
+        var tbl = delinfo[0];
+        var idchng = delinfo[1];
+        var elemclass = tbl + '_' + idchng;
         $.get('/change',{
             table:tbl,
             id:idchng
         },function (data) {
             console.log(data);
         });
+        $('.'+elemclass+'_inputs').each(function () {
+            $(this).replaceWith("<td class="+ elemclass +">"+ $(this).val() +"</td>")
+        });
+        $('#'+elemclass+'_replace').remove();
     });
     $("#departmentbutton").click(function () {
         $(".tbl").hide();
