@@ -63,16 +63,15 @@ def add():
         for i in range(0, len(array)):
             if array[i] == '':
                 array[i] = None
-        print(array)
         task = 'insert into '+table
         if table == 'student':
             task += ' (Sname, idFaculty, idDepartment, Year) values '
         elif table == 'lecturer':
             task += ' (LName, idDepartment, Position, WorkLength) values '
         elif table == 'department':
-            task += ' (DName, idFaculty, Phone, Head) values '
+            task += ' (DName, idFaculty, Phone, AmountOfLecturers, Head) values '
         elif table == 'faculty':
-            task += ' (FName, FoundationDate, Head ) values '
+            task += ' (FName, StudAmount, FoundationDate, Head ) values '
         elif table == 'marks':
             task += ' (idStudent, idLecturer, Mark, Date, Subject) values '
         else:
@@ -101,13 +100,13 @@ def change():
         table = data['table']
         query = "update " + table + " set "
         if table == 'student':
-            query += ' Sname = %s, idDepartment = %s, Year = %s where idStudent = %s ;'
+            query += ' Sname = %s, idFaculty=%s, idDepartment = %s, Year = %s where idStudent = %s ;'
         elif table == 'lecturer':
-            query += ' LName = %s, Position = %s, WorkLength = %s where idLecturer = %s ; '
+            query += ' LName = %s, idDepartment=%s, Position = %s, WorkLength = %s where idLecturer = %s ; '
         elif table == 'department':
-            query += ' DName = %s, Phone = %s, Head = %s where idDepartment = %s ; '
+            query += ' DName = %s, idFaculty = %s, Phone = %s, AmountOfLecturers=%s, Head = %s where idDepartment = %s ; '
         elif table == 'faculty':
-            query += ' FName = %s, FoundationDate = %s, Head = %s where idFaculty = %s ;'
+            query += ' FName = %s, StudAmount=%s, FoundationDate = %s, Head = %s where idFaculty = %s ;'
         elif table == 'marks':
             query += ' idStudent = %s, idLecturer = %s, Mark = %s, Date = %s, Subject = %s where ;'
         else:

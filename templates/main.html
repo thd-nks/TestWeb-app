@@ -32,10 +32,16 @@
     $(document).on("click",".changebutton",function () {
         var delinfo = this.id.split("_");
         var tbl = delinfo[0];
-        var iddel = delinfo[1];
+        var idchng = delinfo[1];
+        var elemclass = tbl + '_' + idchng;
+        $('.'+elemclass).each(function () {
+            $(this).replaceWith("<input type='text' class="+ elemclass +"_inputs value="+ $(this).html() + ">")
+        });
+        //$('.'+elemclass).replaceWith("<input type='text' class="+ elemclass +"_inputs value="+ this.value + ">");
+        $('.'+elemclass+"_inputs").last().after("<input type='button' value='Применить' id="+ elemclass +"_replace >");
         $.get('/change',{
             table:tbl,
-            id:iddel
+            id:idchng
         },function (data) {
             console.log(data);
         });
@@ -80,25 +86,27 @@
                         str = str + ("<td>" + val + "</td>");
                 });
                 str+="</tr>";
+                var row = 0;
                 for (var i = 0; i < result.length; i++) {
                     str += "<tr>";
+                    row += 1;
                     $.each(result[i], function (key, val) {
                         if(key == 0 && item == 'marks'){
                             id = val;
-                            str = str + ("<td>" + val + "</td>");
+                            str = str + ("<td class=" + item + "_" + id + ">" + val + "</td>");
                         }
                         else if(key == 0){
                             id = val;
                         }
                         else {
-                            str = str + ("<td>" + val + "</td>");
+                            str = str + ("<td class=" + item + "_" + id + ">" + val + "</td>");
                         }
                     });
                     str += "</tr>";
-                    var temp = item+ "_" + id;
-                    var delbutton = '<input class="deletebutton" type="button" value="Удалить" id=' + temp + '>';
+                    var elemid = item+ "_" + id;
+                    var delbutton = '<input class="deletebutton" type="button" value="Удалить" id=' + elemid + '>';
                     if(item != 'marks'){
-                    var chbutton =  '<input class="changebutton" type="button" value="Изменить" id=' + temp + '_change>';}
+                    var chbutton =  '<input class="changebutton" type="button" value="Изменить" id=' + elemid + '_change>';}
                     $("#"+item+"table").append(str);
                     $("#"+item+"table").append(delbutton);
                     $("#"+item+"table").append(chbutton);
