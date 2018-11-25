@@ -45,9 +45,14 @@
         var tbl = delinfo[0];
         var idchng = delinfo[1];
         var elemclass = tbl + '_' + idchng;
+        var datastr="";
+        $('.'+elemclass+'_inputs').each(function () {
+            datastr = datastr + $(this).val() + '_';
+        });
         $.get('/change',{
             table:tbl,
-            id:idchng
+            id:idchng,
+            inputs:datastr
         },function (data) {
             console.log(data);
         });

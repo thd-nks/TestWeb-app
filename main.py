@@ -98,6 +98,12 @@ def change():
         mycursor = mydb.cursor()
         data = request.values
         table = data['table']
+        array = data['inputs'].split('_')
+        array = array[0:-1]
+        array.append(data['id'])
+        for i in range(0, len(array)):
+            if array[i] == '':
+                array[i] = None
         query = "update " + table + " set "
         if table == 'student':
             query += ' Sname = %s, idFaculty=%s, idDepartment = %s, Year = %s where idStudent = %s ;'
@@ -112,7 +118,8 @@ def change():
         else:
             return '0'
         print(query)
-        'mycursor.execute(query, array)'
+        print(array)
+        mycursor.execute(query, array)
         print('changed')
         return '0'
 
